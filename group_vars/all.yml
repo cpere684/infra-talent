@@ -1,0 +1,14 @@
+# Minimal variables that must be set for the playbook to be usable.
+# Edit these before running.
+
+# The SSH public key that will be placed in the created user's authorized_keys.
+ssh_pub_key: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDL1BeiSGGFb58YPv0/ouOpjY+t4XxeyvNi97juajlil infrahub-test"
+
+# Username to create for department user
+talent_user: talent
+
+# Timezone to set on the target host
+timezone: "America/New_York"
+
+# Optional netplan_config: leave empty unless you mean to change the host's static IP.
+netplan_config: ""

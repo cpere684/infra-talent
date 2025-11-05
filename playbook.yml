@@ -1,0 +1,8 @@
+---
+- name: Provision Talent Management workstation (Ubuntu)
+  hosts: talent
+  become: true
+  vars_files:
+    - group_vars/all.yml
+  roles:
+    - talent

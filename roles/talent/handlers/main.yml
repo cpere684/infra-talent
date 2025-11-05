@@ -1,0 +1,18 @@
+---
+# Handlers used by the talent role
+
+- name: apt update
+  apt:
+    update_cache: yes
+  listen: apt update
+
+- name: restart display manager if present
+  become: true
+  shell: |
+    if systemctl list-units --full -all | grep -qE 'gdm|lightdm|sddm'; then
+      systemctl restart gdm3 2>/dev/null || true
+      systemctl restart lightdm 2>/dev/null || true
+      systemctl restart sddm 2>/dev/null || true
+    fi
+  args:
+    warn: false

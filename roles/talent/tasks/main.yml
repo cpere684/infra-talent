@@ -1,0 +1,66 @@
+---
+# ... earlier tasks remain unchanged ...
+
+- name: Ensure talent user exists
+  user:
+    name: "{{ talent_user }}"
+    state: present
+    groups: sudo
+    shell: /bin/bash
+    create_home: yes
+
+# Create the common user directories before copying files into them
+- name: Ensure typical user directories exist
+  file:
+    path: "/home/{{ talent_user }}/{{ item }}"
+    state: directory
+    owner: "{{ talent_user }}"
+    group: "{{ talent_user }}"
+    mode: '0755'
+  loop:
+    - Documents
+    - Desktop
+    - Templates
+    - Downloads
+
+- name: Add ssh public key for talent user
+  authorized_key:
+    user: "{{ talent_user }}"
+    key: "{{ ssh_pub_key }}"
+    state: present
+  check_mode: no
+
+- name: Create Power BI (web) desktop shortcut for the user
+  copy:
+    dest: "/home/{{ talent_user }}/Desktop/PowerBI - Web.desktop"
+    owner: "{{ talent_user }}"
+    group: "{{ talent_user }}"
+    mode: '0755'
+    content: |
+      [Desktop Entry]
+      Name=Power BI (Web)
+      Exec=xdg-open https://app.powerbi.com
+      Icon=web-browser
+      Type=Application
+      Terminal=false
+
+# Ensure the /etc/skel Desktop directory exists (so future users inherit the shortcut)
+- name: Ensure /etc/skel/Desktop exists for future users
+  file:
+    path: /etc/skel/Desktop
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'
+
+- name: Place same shortcut in /etc/skel for future users
+  copy:
+    dest: "/etc/skel/Desktop/PowerBI - Web.desktop"
+    content: |
+      [Desktop Entry]
+      Name=Power BI (Web)
+      Exec=xdg-open https://app.powerbi.com
+      Icon=web-browser
+      Type=Application
+      Terminal=false
+    mode: '0644'
